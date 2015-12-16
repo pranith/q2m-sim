@@ -267,11 +267,11 @@ class TraceWriter {
 			g_inst_offset[i] = 0;
 		}
 
-		Qsim::load_file(osd, in);
-
 		osd.set_inst_cb(this, &TraceWriter::inst_cb);
 		osd.set_mem_cb(this, &TraceWriter::mem_cb);
 		osd.set_app_end_cb(this, &TraceWriter::app_end_cb);
+
+		Qsim::load_file(osd, in);
 	}
 
 		bool hasFinished() { return finished; }
@@ -1173,9 +1173,9 @@ int main(int argc, char** argv) {
 	outfile = new ofstream(KNOB(Knob_qsim_trace_name)->getValue().c_str());
     
 	OSDomain *osd_p(NULL);
-	OSDomain &osd(*osd_p);
 	// Create new OSDomain from saved state.
-	osd_p = new OSDomain(KNOB(Knob_state_file)->getValue().c_str());
+	osd_p = new OSDomain(KNOB(Knob_num_cpus)->getValue(), KNOB(Knob_state_file)->getValue().c_str());
+	OSDomain &osd(*osd_p);
 	unsigned n_cpus = osd.get_n();
 
 	if (KNOB(Knob_num_cpus)->getValue() != n_cpus){
@@ -1190,14 +1190,8 @@ int main(int argc, char** argv) {
 
 	// The main loop: run until 'finished' is true.
 	while (!tw.hasFinished()) {
-
-		for (unsigned i = 0; i < 1000000; i++) {
-			for (unsigned j = 0; j < n_cpus; j++) {
-				osd.run(j, 1);
-			}
-		}
-
-		osd.timer_interrupt();
+		osd.run(0, 1000000);
+		//osd.timer_interrupt();
 	}
 
 	if (outfile) { outfile->close(); }

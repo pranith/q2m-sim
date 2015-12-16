@@ -33,7 +33,7 @@ DISTORM_VERSION ?= 3
 
 CXXFLAGS ?= -O2 -Iinclude -I$(DISTORM)/include -I$(QSIM_PREFIX)/include -I$(XED)/include 
 LDFLAGS ?= -L$(QSIM_PREFIX)/lib -L$(XED)/lib -L$(DISTORM)
-LDLIBS ?= -lqsim -lxed -lz -ldistorm$(DISTORM_VERSION) 
+LDLIBS ?= -ldl -lqsim -lxed -lz -ldistorm$(DISTORM_VERSION)
 
 
 vpath %.h ./include
